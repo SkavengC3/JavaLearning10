@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class Main {
     private static final int MAX_USERS = 15;
-    private static final String[] restrictedPasswords = {"admin", "pass", "password", "qwerty", "ytrewq"};
+    private static final String[] restrictedPasswords = {};
     private static final String[] usernames = new String[MAX_USERS];
     private static final String[] passwords = new String[MAX_USERS];
     private static final boolean[] isActive = new boolean[MAX_USERS];
