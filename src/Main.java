@@ -83,11 +83,25 @@ public class Main {
         System.out.println("\n=== Реєстрація нового користувача ===");
         System.out.print("Введіть логін (мінімум 5 символів, без пробілів): ");
         String username = scanner.nextLine();
+
+        validateUsername(username);
+
+        for (int i = 0; i < MAX_USERS; i++) {
+            if (usernames[i] != null && isActive[i] && usernames[i].equals(username)) {
+                throw new Exception("Користувач з таким ім'ям вже існує!");
+            }
+        }
+
         System.out.print("Введіть пароль (мінімум 10 символів, з яких хоча б 3 цифри і 1 спецсимвол): ");
         String password = scanner.nextLine();
 
-        validateUsername(username);
         validatePassword(password);
+
+        for (String restricted : restrictedPasswords) {
+            if (restricted.equals(password)) {
+                throw new Exception("Пароль знаходиться у списку заборонених!");
+            }
+        }
 
         for (int i = 0; i < MAX_USERS; i++) {
             if (usernames[i] == null || !isActive[i]) {
@@ -113,7 +127,7 @@ public class Main {
                 return;
             }
         }
-        throw new Exception("Користувача з ім’ям " + username + " не знайдено!");
+        throw new Exception("Користувача з ім'ям " + username + " не знайдено!");
     }
 
     private static void authenticateUser(Scanner scanner) throws Exception {
@@ -129,7 +143,7 @@ public class Main {
                 return;
             }
         }
-        throw new Exception("Невірне ім’я користувача або пароль!");
+        throw new Exception("Невірне ім'я користувача або пароль!");
     }
 
     private static void addForbiddenPassword(Scanner scanner) throws Exception {
@@ -142,6 +156,11 @@ public class Main {
                 throw new Exception("Пароль вже знаходиться у списку заборонених!");
             }
         }
+
+        String[] newRestrictedPasswords = new String[restrictedPasswords.length + 1];
+        System.arraycopy(restrictedPasswords, 0, newRestrictedPasswords, 0, restrictedPasswords.length);
+        newRestrictedPasswords[restrictedPasswords.length] = password;
+        System.out.println("Пароль успішно додано до списку заборонених.");
     }
 
     private static void showUsers() {
@@ -161,14 +180,22 @@ public class Main {
     }
 
     private static void validateUsername(String username) throws Exception {
-        if (username == null || username.length() < 5 || username.contains(" ")) {
-            throw new Exception("Некоректне ім’я користувача! Воно повинно містити щонайменше 5 символів і не містити пробілів.");
+        if (username == null || username.trim().length() < 5) {
+            throw new Exception("Некоректне ім'я користувача! Воно повинно містити щонайменше 5 символів.");
+        }
+
+        if (username.contains(" ")) {
+            throw new Exception("Некоректне ім'я користувача! Воно не повинно містити пробілів.");
         }
     }
 
     private static void validatePassword(String password) throws Exception {
-        if (password == null || password.length() < 10 || password.contains(" ")) {
-            throw new Exception("Некоректний пароль! Повинен бути мінімум 10 символів і без пробілів.");
+        if (password == null || password.length() < 10) {
+            throw new Exception("Некоректний пароль! Повинен бути мінімум 10 символів.");
+        }
+
+        if (password.contains(" ")) {
+            throw new Exception("Некоректний пароль! Не повинен містити пробілів.");
         }
 
         int digitCount = 0;
