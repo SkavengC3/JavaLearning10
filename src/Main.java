@@ -15,29 +15,33 @@ public class Main {
             showMenu();
             System.out.print("Ваш вибір: ");
             int choice = readIntInput(scanner);
-
-            switch (choice) {
-                case 1:
-                    registerUser(scanner);
-                    break;
-                case 2:
-                    deleteUser(scanner);
-                    break;
-                case 3:
-                    authenticateUser(scanner);
-                    break;
-                case 4:
-                    addForbiddenPassword(scanner);
-                    break;
-                case 5:
-                    showUsers();
-                    break;
-                case 0:
-                    isRunning = false;
-                    System.out.println("Вихід з програми. Бувай!");
-                    break;
-                default:
-                    System.out.println("Гей, такого пункту немає! Спробуй ще раз.");
+            
+            try {
+                switch (choice) {
+                    case 1:
+                        registerUser(scanner);
+                        break;
+                    case 2:
+                        deleteUser(scanner);
+                        break;
+                    case 3:
+                        authenticateUser(scanner);
+                        break;
+                    case 4:
+                        addForbiddenPassword(scanner);
+                        break;
+                    case 5:
+                        showUsers();
+                        break;
+                    case 0:
+                        isRunning = false;
+                        System.out.println("Вихід з програми. Бувай!");
+                        break;
+                    default:
+                        System.out.println("Гей, такого пункту немає! Спробуй ще раз.");
+                }
+            } catch (Exception e) {
+                System.out.println("Помилка: " + e.getMessage());
             }
 
             if (isRunning) {
@@ -80,19 +84,16 @@ public class Main {
         String username = scanner.nextLine();
 
         if (username == null || username.trim().length() < 5) {
-            System.out.println("Помилка! Логін має бути не менше 5 символів!");
-            return;
+            throw new RuntimeException("Логін має бути не менше 5 символів!");
         }
 
         if (username.contains(" ")) {
-            System.out.println("Помилка! У логіні не повинно бути пробілів!");
-            return;
+            throw new RuntimeException("У логіні не повинно бути пробілів!");
         }
 
         for (int i = 0; i < MAX_USERS; i++) {
             if (usernames[i] != null && isActive[i] && usernames[i].equals(username)) {
-                System.out.println("Такий користувач вже є!");
-                return;
+                throw new RuntimeException("Такий користувач вже є!");
             }
         }
 
@@ -100,13 +101,11 @@ public class Main {
         String password = scanner.nextLine();
 
         if (password == null || password.length() < 10) {
-            System.out.println("Помилка! Пароль має бути не менше 10 символів!");
-            return;
+            throw new RuntimeException("Пароль має бути не менше 10 символів!");
         }
 
         if (password.contains(" ")) {
-            System.out.println("Помилка! У паролі не повинно бути пробілів!");
-            return;
+            throw new RuntimeException("У паролі не повинно бути пробілів!");
         }
 
         int digitCount = 0;
@@ -120,19 +119,16 @@ public class Main {
         }
 
         if (digitCount < 3) {
-            System.out.println("Помилка! У паролі має бути мінімум 3 цифри!");
-            return;
+            throw new RuntimeException("У паролі має бути мінімум 3 цифри!");
         }
 
         if (specialCharCount < 1) {
-            System.out.println("Помилка! У паролі має бути хоча б 1 спецсимвол!");
-            return;
+            throw new RuntimeException("У паролі має бути хоча б 1 спецсимвол!");
         }
 
         for (String restricted : bannedPasswords) {
             if (restricted.equals(password)) {
-                System.out.println("Цей пароль заборонений! Вибери інший.");
-                return;
+                throw new RuntimeException("Цей пароль заборонений! Вибери інший.");
             }
         }
 
@@ -149,7 +145,7 @@ public class Main {
         }
 
         if (!userAdded) {
-            System.out.println("Місця немає! У нас вже максимум користувачів (15)!");
+            throw new RuntimeException("Місця немає! У нас вже максимум користувачів (15)!");
         }
     }
 
@@ -169,7 +165,7 @@ public class Main {
         }
 
         if (!userFound) {
-            System.out.println("Такого користувача немає в системі!");
+            throw new RuntimeException("Такого користувача немає в системі!");
         }
     }
 
@@ -190,7 +186,7 @@ public class Main {
         }
 
         if (!authenticated) {
-            System.out.println("Невірний логін або пароль! Спробуй ще раз.");
+            throw new RuntimeException("Невірний логін або пароль! Спробуй ще раз.");
         }
     }
 
@@ -200,14 +196,12 @@ public class Main {
         String password = scanner.nextLine();
 
         if (password == null || password.trim().isEmpty()) {
-            System.out.println("Порожній пароль не можна заборонити!");
-            return;
+            throw new RuntimeException("Порожній пароль не можна заборонити!");
         }
 
         for (String restricted : bannedPasswords) {
             if (restricted.equals(password)) {
-                System.out.println("Цей пароль вже заборонений!");
-                return;
+                throw new RuntimeException("Цей пароль вже заборонений!");
             }
         }
 
@@ -230,7 +224,7 @@ public class Main {
         }
 
         if (!hasUsers) {
-            System.out.println("Немає активних користувачів.");
+            throw new RuntimeException("Немає активних користувачів.");
         }
     }
 }
